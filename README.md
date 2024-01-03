@@ -21,6 +21,8 @@
 # Installation
 - Clone the repository: git clone https://github.com/amitsahni97/todo-app.git
 - Create a new virtual environment using terminal(run python -m venv venv_name)
+- Now activate newly created virtual environment(In terminal type venv_name\Scripts\activate.bat)
+- Make sure your are in virtual environment
 - In terminal, run pip install -r requirements.txt (this will install all the dependencies needed to run this project)
 - In terminal, run uvicron main:app --reload
 - See the port number on which the server is running in terminal
