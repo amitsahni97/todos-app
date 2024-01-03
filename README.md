@@ -2,12 +2,12 @@
 ## Todos App
 
 # Project Description
-- This Todos App is a simple yet powerful task management application designed to help users organize their daily activities efficiently.
+- This Todos App is a task management application designed to help users organize their daily activities efficiently.
 -  With an intuitive user interface(Swagger UI from FastAPI) and essential features, it simplifies the process of creating, tracking, and completing tasks.
 
 # Features
 - User can create their account, get token & the use this token to create their tasks.
-- Has advanced verification method to secure user' tasks and their account.
+- Has advanced verification method to secure user's tasks and their account.
 - If token is invalid, it will not allow any user to create tasks.
 - Easily add new tasks.
 - Mark tasks as completed to track your progress.
