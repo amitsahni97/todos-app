@@ -24,5 +24,5 @@
 - In terminal, run pip install -r requirements.txt (this will install all the dependencies needed to run this project)
 - In terminal, run uvicron main:app --reload
 - See the port number on which the server is running in terminal
-- Now type localhost:port_numer/docs. This will oopen Swagger UI(Interface) to interact with this app
+- Now type localhost:port_numer/docs. This will open Swagger UI(Interface) to interact with this app
 - Great!, now you can create account, get token & then start creating your tasks by using token
