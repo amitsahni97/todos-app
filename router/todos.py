@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, Path, Query
 from sqlalchemy import and_
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
-from exceptions import invalid_token_exception, ValidateTokenError
+from exceptions import ValidateTokenError
 from models import Todos
 from request_body import TodoRequestSchema
 from utils import get_db, get_todo

@@ -1,10 +1,9 @@
 from sqlalchemy import and_
-
 from database import SessionLocal
 from datetime import timedelta, datetime
-from fastapi import status, HTTPException
+from fastapi import status
 from passlib.context import CryptContext
-from exceptions import invalid_token_exception, invalid_user_name, ValidateTokenError
+from exceptions import InvalidCredentialsException, ValidateTokenError
 from jose import jwt, JWTError
 
 
@@ -23,7 +22,10 @@ def get_db():
 
 def validate_user_name(user_name):
     if len(user_name) == 0 or len(user_name) >= 15:
-        raise invalid_user_name()
+        raise InvalidCredentialsException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="user_name should be greater than 0 & less than 16"
+        )
 
 
 def get_jwt_token(user_name: str, user_id: int, expire_time: timedelta):

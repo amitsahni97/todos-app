@@ -1,8 +1,7 @@
 from datetime import timedelta
-from fastapi import APIRouter, status, Depends, HTTPException, Query, Path
+from fastapi import APIRouter, status, Depends, Query, Path
 from sqlalchemy.exc import NoResultFound, IntegrityError
-from exceptions import invalid_credentials_exception, DuplicateException, UnknownErrorException, NoRecordFound, \
-    InvalidCredentialsException
+from exceptions import DuplicateException, UnknownErrorException, NoRecordFound, InvalidCredentialsException
 from request_body import UsersDetailsSchema
 from sqlalchemy.orm import Session
 from models import Users
@@ -40,6 +39,9 @@ def create_user(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="same record, change it"
         )
+
+    except InvalidCredentialsException as e:
+        raise e
 
     except Exception:
         raise UnknownErrorException(

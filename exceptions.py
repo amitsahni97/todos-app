@@ -27,6 +27,7 @@ class InvalidCredentialsException(CustomException):
 class ValidateTokenError(CustomException):
     pass
 
+
 def invalid_credentials_exception():
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -34,10 +35,3 @@ def invalid_credentials_exception():
     )
 
     return credentials_exception
-
-
-def invalid_token_exception():
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Incorrect user name or password"
-    )
