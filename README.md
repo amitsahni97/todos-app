@@ -13,7 +13,8 @@
 - Mark tasks as completed to track your progress.
 - Remove tasks that are no longer relevant or needed.
 
-# Screenshot
+# Screenshot 
+## (Interface to use this app)
 ![Todos App](https://github.com/amitsahni97/todos-app/assets/75803822/808102f7-8d17-49e8-ab4a-74958989d59a)
 
 
