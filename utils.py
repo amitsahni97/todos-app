@@ -4,7 +4,7 @@ from database import SessionLocal
 from datetime import timedelta, datetime
 from fastapi import status, HTTPException
 from passlib.context import CryptContext
-from exceptions import invalid_token_exception, invalid_user_name
+from exceptions import invalid_token_exception, invalid_user_name, ValidateTokenError
 from jose import jwt, JWTError
 
 
@@ -44,7 +44,7 @@ def validate_token(token: str):
         return {'user_name': user_name, 'user_id': user_id}
 
     except JWTError:
-        raise HTTPException(
+        raise ValidateTokenError(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while validating token"
         )

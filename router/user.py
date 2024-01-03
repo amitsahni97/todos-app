@@ -1,7 +1,8 @@
 from datetime import timedelta
 from fastapi import APIRouter, status, Depends, HTTPException, Query, Path
 from sqlalchemy.exc import NoResultFound, IntegrityError
-from exceptions import invalid_credentials_exception
+from exceptions import invalid_credentials_exception, DuplicateException, UnknownErrorException, NoRecordFound, \
+    InvalidCredentialsException
 from request_body import UsersDetailsSchema
 from sqlalchemy.orm import Session
 from models import Users
@@ -34,13 +35,14 @@ def create_user(
 
         return user_obj
 
-    except Exception as error:
-        if type(error) == IntegrityError:
-            raise HTTPException(
-                        status_code=status.HTTP_406_NOT_ACCEPTABLE,
-                        detail="Same user name exists"
-                    )
-        raise HTTPException(
+    except IntegrityError:
+        raise DuplicateException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="same record, change it"
+        )
+
+    except Exception:
+        raise UnknownErrorException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while saving user's details"
         )
@@ -55,13 +57,26 @@ def get_token(
     try:
         user_details = db.query(Users).filter(Users.user_name == user_name).one()
         if not bcrypt_context.verify(password, user_details.hashed_password):
-            return invalid_credentials_exception()
+            raise InvalidCredentialsException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials"
+            )
 
         token = get_jwt_token(user_name, user_details.id, timedelta(minutes=20))
 
         return {"token": token}
+
+    except NoResultFound:
+        raise NoRecordFound(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No record found for given user"
+        )
+
+    except InvalidCredentialsException as e:
+        raise e
+
     except Exception:
-        raise HTTPException(
+        raise UnknownErrorException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while matching user_name or password"
         )
@@ -73,11 +88,8 @@ def get_all_users(db: Session = Depends(get_db)):
         details = db.query(Users).all()
         return details
 
-    except Exception as e:
-        print("errro------>", str(e))
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(
+    except Exception:
+        raise UnknownErrorException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occurred while fetching user details"
         )
@@ -92,15 +104,13 @@ def delete_user(user_id: int = Path(), db: Session = Depends(get_db)):
         return {"msg": "deleted"}
 
     except NoResultFound:
-        db.rollback()
-        raise HTTPException(
+        raise NoRecordFound(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No record found"
         )
 
     except Exception:
-        db.rollback()
-        raise HTTPException(
+        raise UnknownErrorException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occurred while fetching user details"
         )

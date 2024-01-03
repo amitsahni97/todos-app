@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, Path, Query
 from sqlalchemy import and_
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
-from exceptions import invalid_token_exception
+from exceptions import invalid_token_exception, ValidateTokenError
 from models import Todos
 from request_body import TodoRequestSchema
 from utils import get_db, get_todo
@@ -28,15 +28,14 @@ def save_todo(
         db.add(todos)
         db.commit()
 
+    except ValidateTokenError as e:
+        raise e
+
     except Exception:
-        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while saving details to db"
         )
-
-    else:
-        db.close()
 
 
 @todo_router.patch("/{todo_id}", status_code=status.HTTP_202_ACCEPTED)
@@ -65,7 +64,7 @@ def update_todo(
         db.add(result)
         db.commit()
 
-    except invalid_token_exception as e:
+    except ValidateTokenError as e:
         raise e
 
     except NoResultFound:
@@ -97,7 +96,7 @@ def get_particular_todo(
         ).all()
         return result
 
-    except invalid_token_exception as e:
+    except ValidateTokenError as e:
         raise e
 
     except Exception:
@@ -119,7 +118,10 @@ def get_all_todos(
         ).all()
         return result
 
-    except invalid_token_exception as e:
+    # except invalid_token_exception as e:
+    #     raise e
+
+    except ValidateTokenError as e:
         raise e
 
     except Exception:
@@ -148,14 +150,15 @@ def delete_particular_todo(
         return {"msg": "deleted"}
 
     except NoResultFound:
-        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No record found"
         )
 
+    except ValidateTokenError as e:
+        raise e
+
     except Exception:
-        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occurred while deleting a todo"
