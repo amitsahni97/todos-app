@@ -25,7 +25,6 @@ def create_user(
             first_name=user_details.first_name,
             last_name=user_details.last_name,
             email=user_details.email,
-            role=user_details.role,
             hashed_password=bcrypt_context.hash(user_details.password)
         )
 

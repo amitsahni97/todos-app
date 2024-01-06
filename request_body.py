@@ -15,4 +15,3 @@ class UsersDetailsSchema(BaseModel):
     last_name: str
     email: str
     password: str
-    role: str

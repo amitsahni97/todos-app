@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 
-SQLALCHEMY_DATABASE_URL = 'sqlite:///./todosapp.db'
+SQLALCHEMY_DATABASE_URL = 'sqlite:///./file_name.db'
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
 )

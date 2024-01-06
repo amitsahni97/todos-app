@@ -42,7 +42,10 @@ def validate_token(token: str):
         user_id = payload.get('id')
 
         if user_id is None or user_name is None:
-            raise invalid_token_exception()
+            raise ValidateTokenError(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token"
+            )
         return {'user_name': user_name, 'user_id': user_id}
 
     except JWTError:
