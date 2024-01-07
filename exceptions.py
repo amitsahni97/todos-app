@@ -28,6 +28,10 @@ class ValidateTokenError(CustomException):
     pass
 
 
+class NotAdminError(CustomException):
+    pass
+
+
 def invalid_credentials_exception():
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

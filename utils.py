@@ -20,14 +20,6 @@ def get_db():
         db.close()
 
 
-def validate_user_name(user_name):
-    if len(user_name) == 0 or len(user_name) >= 15:
-        raise InvalidCredentialsException(
-            status_code=status.HTTP_406_NOT_ACCEPTABLE,
-            detail="user_name should be greater than 0 & less than 16"
-        )
-
-
 def get_jwt_token(user_name: str, user_id: int, expire_time: timedelta):
     encode = {'sub': user_name, 'id': user_id}
     expiry = datetime.utcnow() + expire_time
@@ -48,6 +40,9 @@ def validate_token(token: str):
             )
         return {'user_name': user_name, 'user_id': user_id}
 
+    except ValidateTokenError as exc:
+        raise exc
+
     except JWTError:
         raise ValidateTokenError(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -66,3 +61,14 @@ def get_todo(db, model, todo_id, user_id):
         return details
     except Exception as e:
         raise e
+
+
+def validate_user_id_and_token(token, user_id):
+    user_details = validate_token(token)
+    saved_user_id = user_details.get("user_id")
+    if user_id != saved_user_id:
+        raise InvalidCredentialsException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="user_id is incorrect"
+        )
+    return user_details
